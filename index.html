@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <script>
+      (function() {
+        if (typeof window === 'undefined') return;
+        var NativeWebSocket = window.WebSocket;
+        if (!NativeWebSocket) return;
+
+        window.WebSocket = function(url, protocols) {
+          if (
+            (typeof protocols === 'string' && protocols.includes('vite-hmr')) ||
+            (Array.isArray(protocols) && protocols.indexOf('vite-hmr') !== -1) ||
+            (typeof url === 'string' && (url.includes('vite-hmr') || url.includes('@vite')))
+          ) {
+            var mockWs = {
+              readyState: 3,
+              CONNECTING: 0, OPEN: 1, CLOSING: 2, CLOSED: 3,
+              addEventListener: function() {},
+              removeEventListener: function() {},
+              send: function() {},
+              close: function() {},
+              onerror: null, onopen: null, onclose: null, onmessage: null
+            };
+            return mockWs;
+          }
+          return new (Function.prototype.bind.apply(NativeWebSocket, [null].concat(Array.prototype.slice.call(arguments))));
+        };
+        window.WebSocket.prototype = NativeWebSocket.prototype;
+        window.WebSocket.CONNECTING = 0;
+        window.WebSocket.OPEN = 1;
+        window.WebSocket.CLOSING = 2;
+        window.WebSocket.CLOSED = 3;
+
+        var origError = console.error;
+        console.error = function() {
+          var msg = Array.prototype.join.call(arguments, ' ');
+          if (msg.indexOf('[vite]') !== -1 || msg.indexOf('WebSocket closed without opened') !== -1) {
+            return;
+          }
+          origError.apply(console, arguments);
+        };
+
+        window.addEventListener('unhandledrejection', function(e) {
+          if (e.reason && (String(e.reason).indexOf('WebSocket') !== -1 || String(e.reason).indexOf('[vite]') !== -1)) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+        }, true);
+
+        window.addEventListener('error', function(e) {
+          if (e.message && (e.message.indexOf('WebSocket') !== -1 || e.message.indexOf('[vite]') !== -1)) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+        }, true);
+      })();
+    </script>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover, interactive-widget=resizes-content" />
+    <meta name="theme-color" content="#020617" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="format-detection" content="telephone=no" />
+    <title>MAGMA</title>
+    <meta name="description" content="Your mood. Your culture. Your friends. One place." />
+    <meta property="og:title" content="MAGMA" />
+    <meta property="og:description" content="Your mood. Your culture. Your friends. One place." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-slate-950 text-slate-100 font-sans selection:bg-indigo-500 selection:text-white antialiased">
+    <div id="root"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
+

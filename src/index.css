@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    touch-action: manipulation;
+    overscroll-behavior-y: contain;
+  }
+
+  body {
+    font-family: 'Tajawal', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans Arabic', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
+  }
+}
+
+/* Cross-Platform Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #020617;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* Hardware-accelerated GPU layer for high-resolution filtered videos (4K/1080p) */
+.gpu-video-filter {
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  will-change: filter, transform;
+  contain: layout paint;
+}
+
+/* Ultra-fast feed scrolling optimization (skips off-screen layout/paint) */
+.feed-post-card {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 460px;
+  contain: layout style;
+}
+
+
